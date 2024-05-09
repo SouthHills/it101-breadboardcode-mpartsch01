@@ -18,6 +18,7 @@ joystick.get_xy_pos()
 
 # Colors
 WHITE = (255, 255, 255)
+PINK = (255, 190, 200)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLACK = (0, 0, 0)
@@ -93,7 +94,7 @@ def game_loop():
             # Pause mechanism
             while PAUSED:
                 WINDOW.fill(BLACK)
-                message("Paused. Press [Space] to continue or [Escape] to quit.", WHITE)
+                message("Paused. Press joystick button to continue. You can never quit.", PINK)
                 pygame.display.update()
 
                 for event in pygame.event.get():
@@ -157,7 +158,7 @@ def game_loop():
         # End game message
         while game_close:
             WINDOW.fill(BLACK)
-            message("Game Over! Press [Space] to play again or [Escape] to quit.", WHITE)
+            message("Game Over! Press joystick button to play again. There is no escape.", WHITE)
             pygame.display.update()
 
             for event in pygame.event.get():
@@ -169,7 +170,7 @@ def game_loop():
                         game_close = False
                         game_over = True
             
-            # TODONE: Replace "False" with a call to the appropriate method in your joystick instance
+            # TODO: Replace "False" with a call to the appropriate method in your joystick instance
             if joystick.get_button_pressed():
                 game_close = False
                 game_over = False
