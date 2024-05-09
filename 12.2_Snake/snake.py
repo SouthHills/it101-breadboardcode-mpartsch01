@@ -1,10 +1,14 @@
-# NOTE: If running the game gives you an error, run either "sudo apt install python3-pygame" OR "pip install pygame" in the terminal.
-
+# NOTE: If running the game gives you an error, run either "sudo apt install python3-pygame" OR "pip install pygame" in the term
+from joystick import *
 import pygame
 import time
 import random
+from pathlib import Path
+import sys
+from gpiozero import Button
 
 pygame.init()
+joystick = Joystick()
 
 # Set up the display
 GRID_SIZE = 28
@@ -12,6 +16,11 @@ GRID_WIDTH, GRID_HEIGHT = 28, 24  # 28 columns x 24 rows
 WIDTH, HEIGHT = GRID_WIDTH * GRID_SIZE, GRID_HEIGHT * GRID_SIZE
 WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Snake Game - Score: 0")
+joystick.get_direction()
+joystick.get_button_pressed()
+joystick.get_xy_pos()
+
+
 
 # Colors
 WHITE = (255, 255, 255)
@@ -44,6 +53,7 @@ def generate_food():
 
 def do_keypress_event(event, current_direction):
     global PAUSED
+   
     # Can't double-back on your snake
     if event.key == pygame.K_LEFT and current_direction != "RIGHT":
         return "LEFT"
@@ -58,6 +68,7 @@ def do_keypress_event(event, current_direction):
 
 # Function to main loop
 def game_loop():
+    global joystick
     global PAUSED
     game_over = False
     game_close = False
@@ -118,10 +129,13 @@ def game_loop():
             elif direction == "DOWN":
                 y += 1
 
+        else:
+            def joystick() -> get_direction:
+
             # Check for collision with walls or self
-            if x >= GRID_WIDTH or x < 0 or y >= GRID_HEIGHT or y < 0 or (x, y) in snake_list[1:]:
-                game_over = True
-                game_close = True
+                if x >= GRID_WIDTH or x < 0 or y >= GRID_HEIGHT or y < 0 or (x, y) in snake_list[1:]:
+                    game_over = True
+                    game_close = True
 
             # Check if snake eats food
             if x == food_x and y == food_y:
