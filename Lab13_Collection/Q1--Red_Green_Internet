@@ -1,0 +1,39 @@
+import subprocess
+from gpiozero import LED as LEDClass
+
+LEDR=LEDClass(17)
+LEDG=LEDClass(12)
+
+
+def is_internet_connected():
+    try:
+    # Run the ping command with a timeout of 2 seconds and count 1 packet
+        subprocess.check_output(['ping', '-c', '1', '-W', '2', 'www.google.com'])
+        return True
+    except subprocess.CalledProcessError:
+        return False
+    
+def lights_up():
+    global LEDR, LEDG
+    while True:
+        if is_internet_connected():
+            LEDG.on()
+            LEDR.off()
+        else:
+            LEDR.on()
+            LEDG.off()
+
+def destroy():
+    global LEDR, LEDG
+    # Release resources
+    LEDR.close()
+    LEDG.close()
+        
+if __name__ == '__main__':  # Program entrance
+    print ('Program is starting... ')
+    try:
+        is_internet_connected()
+        lights_up()
+    except KeyboardInterrupt: # Press ctrl-c to end the program.
+        destroy()
+        

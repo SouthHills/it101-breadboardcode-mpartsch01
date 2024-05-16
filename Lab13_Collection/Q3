@@ -1,0 +1,25 @@
+from gpiozero import RGBLED
+
+LED = RGBLED(red=17, green=18, blue=27, active_high=True)
+
+def set_color(r, g, b):
+    """ Invert the colors due to using a common anode """
+    LED.color = (1 - r, 1 - g, 1 - b)
+    
+def temp_test():
+    global LED
+    if comp_temp(80) >= temp.bash:
+        LED.Color = (1 - g)
+    else:
+        LED.Color = (1 - r)
+        
+def destroy():
+    LED.off()
+
+
+if __name__ == 'main':
+        set_color()
+    try:
+        temp_test()
+    except:
+        destroy()

@@ -1,19 +1,24 @@
+from gpiozero import LED as LEDClass
+
 # Description : Use ADC module to read the voltage value of potentiometer.
+# NOTE: The ADCDevice module exists in the Common directory.
 from pathlib import Path
 import sys
-from gpiozero import PWMLED
 import time
 
+# The next two lines are required to be able to properly import ADCDevice
 HERE = Path(__file__).parent.parent
 sys.path.append(str(HERE / 'Common'))
 from ADCDevice import * 
 
 USING_GRAVITECH_ADC = False # Only modify this if you are using a Gravitech ADC
 
-LEDR = PWMLED(17) 
-LEDG = PWMLED(26)
-#17 is the pin
 ADC = ADCDevice() # Define an ADCDevice class object
+
+LEDR = LEDClass(5)
+LEDG = LEDClass(12)
+LEDY = LEDClass(19)
+LEDB = LEDClass(21)
 
 def setup():
     global ADC
@@ -30,33 +35,51 @@ def setup():
         exit(-1)
         
 def loop():
-    global LEDR, LEDG
     while True:
-        # read the ADC value of channel 0
-        value = ADC.analogRead(0)  # Gets a value between 0 and 255
-        # Set LED brightness directly with value from ADC
-        LEDR.value = value / 255.0  # Value of PWM LED must be between 0 and 1
-        # calculate the voltage value
-        voltage = value / 255.0 * 3.3  # 3.3 because we are using the 3.3V lead
+        value = ADC.analogRead(0)    # read the ADC value of channel 0
+        voltage = value / 255.0 * 3.3  # calculate the voltage value
+        print ('ADC Value : %d, Voltage : %.2f'%(value,voltage))
+        time.sleep(0.1)
         
-        value= ADC.analogRead(2)
-        LEDG.value = value / 255.0
-        voltage2 = value / 255.0
-        print(f'ADC 1 Value : {value}, Voltage Red : {voltage:.2f}')
-        print(f'ADC 2 Value: {value}, Voltage Green : {voltage2: .2f}')
+
+
+def bloop():
+    global LEDR, LEDG, LEDB, LEDY, ADC
+    LEDR.off()
+    LEDG.off()
+    LEDY.off()
+    LEDB.off()
+    while True:
+        value = ADC.analogRead(0)
+        if value >= 255 * 0.25:
+            LEDB.on()
+        else:
+            LEDB.off()
+        if value >= 255 * 0.5:
+            LEDG.on()
+        else:
+            LEDG.off()
+        if value >= 255 * 0.75:
+            LEDY.on()
+        else:
+            LEDY.off()
+        if value >= 255 * 0.95:
+            LEDR.on()
+        else:
+            LEDR.off()
+
         
-        time.sleep(0.03)
 
 def destroy():
-    global LED, ADC
-    LED.close()
     ADC.close()
     
 if __name__ == '__main__':   # Program entrance
     print ('Program is starting ... ')
     try:
         setup()
+        bloop()
         loop()
     except KeyboardInterrupt: # Press ctrl-c to end the program.
         destroy()
         
+
